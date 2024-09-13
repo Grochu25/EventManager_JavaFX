@@ -1,9 +1,10 @@
 package com.example.eventmanager;
 
+import com.example.eventmanager.Controls.EventTableView;
 import com.example.eventmanager.model.Event;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.example.eventmanager.model.Events;
+import jakarta.xml.bind.*;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -13,8 +14,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class MainController implements Initializable
@@ -36,43 +35,30 @@ public class MainController implements Initializable
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
-        setColumnsInTable();
-        ObservableList<Event> lista = FXCollections.observableList(List.of(
-                new Event("tuba","brak",LocalDateTime.now(), Event.EventType.PRACA, Event.EventPriority.WYSOKI),
-                new Event("dupa","brak",LocalDateTime.now(), Event.EventType.BRAK, Event.EventPriority.NISKI)));
-        SortedList sl = new SortedList<>(lista);
-        eventTable.setItems(sl);
-        sl.comparatorProperty().bind(eventTable.comparatorProperty());
+        eventTable.getColumns().addAll(new EventTableView().getColumns());
 
-        //Event[] events = readFromDefaultFile();
+        SortedList<Event> sortedList = new SortedList<Event>(FXCollections.emptyObservableList());
         try {
-            readFromDefaultFile();
+            Events events = readEventsFromDefaultFile();
+            sortedList = new SortedList<Event>(FXCollections.observableList(events.getEventList()));
         }catch(Exception e)
         {
             e.printStackTrace();
         }
+        eventTable.setItems(sortedList);
+        sortedList.comparatorProperty().bind(eventTable.comparatorProperty());
     }
 
-    private void setColumnsInTable()
-    {
-        setColumn("Nazwa","name");
-        setColumn("Data","datetime");
-        setColumn("Typ","type");
-        setColumn("Priorytet","priority");
-        //setColumn("Opis","description");
-    }
+    private Events readEventsFromDefaultFile() throws IOException, JAXBException {
+        JAXBContext context = JAXBContext.newInstance(Events.class);
+        Unmarshaller unmarshaller = context.createUnmarshaller();
 
-    private void setColumn(String columnName, String propertyName)
-    {
-        TableColumn<Event, String> column = new TableColumn<>(columnName);
-        column.setCellValueFactory(new PropertyValueFactory<Event,String>(propertyName));
-        eventTable.getColumns().add(column);
-    }
+//        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+//        Events x = new Events(List.of(new Event("TUBA","nie",LocalDateTime.now(), Event.EventType.BRAK, Event.EventPriority.BRAK)));
+//        marshaller.marshal(x, System.out);
 
-    private Event[] readFromDefaultFile() throws IOException {
-        XmlMapper mapper = new XmlMapper();
         File file = new File("default.xml");
-        SortedList<Event> events = mapper.readValue(file, SortedList.class);
-        return null;
+        Events events = (Events) unmarshaller.unmarshal(file);
+        return events;
     }
 }
