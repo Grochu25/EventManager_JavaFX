@@ -2,6 +2,7 @@ module com.example.eventmanager {
     requires javafx.controls;
     requires javafx.fxml;
     requires jakarta.xml.bind;
+    requires java.desktop;
 
 
     opens com.example.eventmanager to javafx.fxml, jakarta.xml.bind;

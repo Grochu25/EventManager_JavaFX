@@ -7,6 +7,7 @@ import java.time.format.FormatStyle;
 
 public class Event implements Comparable, Serializable
 {
+    //TODO: Klasy i możliwość porównania
     public enum EventType {BRAK, PRACA, RODZINA, ROZRYWKA, ZDROWIE, SPORT}
     public enum EventPriority {BRAK, WYSOKI, SREDNI, NISKI}
 

@@ -1,8 +1,6 @@
 package com.example.eventmanager.model;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.*;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -13,6 +11,8 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Events
 {
+    @XmlElementWrapper(name="eventList")
+    @XmlElement(name="event")
     private List<Event> eventList;
 
     public Events(){

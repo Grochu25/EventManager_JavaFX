@@ -5,9 +5,15 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-public class EventTableView extends TableView<Event>
+import java.util.ArrayList;
+import java.util.List;
+
+//TODO: To można zamienić na coś bardziej jak lista
+public class TableColumns
 {
-    public EventTableView()
+    private List<TableColumn<Event, String>> columns = new ArrayList<>();
+
+    public TableColumns()
     {
         setColumnsInTable();
     }
@@ -24,6 +30,8 @@ public class EventTableView extends TableView<Event>
     {
         TableColumn<Event, String> column = new TableColumn<>(columnName);
         column.setCellValueFactory(new PropertyValueFactory<Event,String>(propertyName));
-        this.getColumns().add(column);
+        columns.add(column);
     }
+
+    public List<TableColumn<Event, String>> getColumns(){return columns;}
 }
