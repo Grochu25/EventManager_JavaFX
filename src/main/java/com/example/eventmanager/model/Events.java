@@ -2,7 +2,6 @@ package com.example.eventmanager.model;
 
 import jakarta.xml.bind.annotation.*;
 
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -16,10 +15,10 @@ public class Events
     private List<Event> eventList;
 
     public Events(){
-        eventList = new ArrayList<Event>();
+        eventList = new ArrayList<>();
     }
 
-    public Events(Collection c)
+    public Events(Collection<Event> c)
     {
         eventList = new ArrayList<>(c);
     }

@@ -38,46 +38,57 @@ public class MainController implements Initializable
     private ObservableList<Event> eventsObservableList;
     private ObservableList<Event> eventsFilteredList;
     private EventFilters filters;
-    private FileIO fileIO;
+    private FileIO<Events> fileIO;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle)
     {
         initializeFieldsAndControls();
-
         prepareListsAndTableContent();
+        setTableRowOnClickBehaviour();
     }
 
     private void initializeFieldsAndControls()
     {
         eventTable.getColumns().addAll(new TableColumns().getColumns());
         setComboBoxes();
-        filters = new EventFilters(actionEvent -> {filter();});
+        filters = new EventFilters(actionEvent -> filter());
         FilterPane.getChildren().addAll(filters.getFilterPanes());
-        fileIO = new FileIOXML();
-    }
-
-    private void prepareListsAndTableContent()
-    {
-        SortedList<Event> sortedList = new SortedList<Event>(FXCollections.observableList(new ArrayList<Event>()));
-        try {
-            Events events = readEventsFromDefaultFile();
-            eventsObservableList = FXCollections.observableList(events.getEventList());
-            eventsFilteredList = FXCollections.observableList(new ArrayList<Event>());
-            eventsFilteredList.addAll(eventsObservableList);
-            sortedList = new SortedList<Event>(eventsFilteredList);
-            eventTable.setItems(sortedList);
-            sortedList.comparatorProperty().bind(eventTable.comparatorProperty());
-        }catch(Exception e)
-        {
-            error("Nie udało się otworzyć pliku domyślnego");
-        }
+        fileIO = new FileIOXML<>();
     }
 
     private void setComboBoxes()
     {
         typeComboBox.getItems().addAll(List.of(Event.EventType.values()));
         priorityComboBox.getItems().addAll(List.of(Event.EventPriority.values()));
+    }
+
+    private void prepareListsAndTableContent()
+    {
+        eventsObservableList = FXCollections.observableList(readEventsFromDefaultFile().getEventList());
+        eventsFilteredList = FXCollections.observableList(new ArrayList<>());
+        eventsFilteredList.addAll(eventsObservableList);
+        SortedList<Event> sortedList = new SortedList<>(eventsFilteredList);
+        eventTable.setItems(sortedList);
+        sortedList.comparatorProperty().bind(eventTable.comparatorProperty());
+    }
+
+    private void setTableRowOnClickBehaviour()
+    {
+        eventTable.setRowFactory(eventTableView -> {
+            TableRow<Event> row = new TableRow<>();
+            row.setOnMouseClicked(ev->{
+                if(ev.getClickCount() == 2 && !row.isEmpty())
+                {
+                    Event event = row.getItem();
+                    Alert descriptionAlert = new Alert(Alert.AlertType.INFORMATION);
+                    descriptionAlert.setHeaderText(event.getName());
+                    descriptionAlert.setContentText(event.getDescription());
+                    descriptionAlert.show();
+                }
+            });
+            return row;
+        });
     }
 
     private void error(String message)
@@ -89,14 +100,20 @@ public class MainController implements Initializable
     private void filter()
     {
         eventsFilteredList.clear();
-        eventsFilteredList.addAll(eventsObservableList.filtered(event->{
-            return (filters.getCheckedTypes().isEmpty() || filters.getCheckedTypes().contains(event.getType()))
-                    && (filters.getCheckedPriorities().isEmpty() || filters.getCheckedPriorities().contains(event.getPriority()));
-        }));
+        eventsFilteredList.addAll(eventsObservableList.filtered(
+                event-> (filters.getCheckedTypes().isEmpty() || filters.getCheckedTypes().contains(event.getType()))
+                    && (filters.getCheckedPriorities().isEmpty() || filters.getCheckedPriorities().contains(event.getPriority()))
+        ));
     }
 
-    private Events readEventsFromDefaultFile() throws Exception {
-        return (Events) fileIO.readFromFile(new File("default.xml"));
+    private Events readEventsFromDefaultFile(){
+        Events events = new Events();
+        try {
+            events = fileIO.readFromFile(new File("default.xml"));
+        }catch(Exception e) {
+            error("Nie udało się otworzyć pliku domyślnego");
+        }
+        return events;
     }
 
 
@@ -151,7 +168,7 @@ public class MainController implements Initializable
     public void importEvents()
     {
         try {
-            Events events = (Events) fileIO.readFromFile();
+            Events events = fileIO.readFromFile();
             eventsObservableList.clear();
             eventsObservableList.addAll(events.getEventList());
         } catch (Exception e) {

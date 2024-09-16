@@ -1,6 +1,5 @@
 package com.example.eventmanager.model;
 
-import jakarta.xml.bind.JAXBException;
 
 import java.io.File;
 

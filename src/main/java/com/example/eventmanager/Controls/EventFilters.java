@@ -64,21 +64,19 @@ public class EventFilters
 
     public List<Event.EventType> getCheckedTypes()
     {
-        List<Event.EventType> types = typeFilters.getChildren().stream()
+        return typeFilters.getChildren().stream()
                 .map((n)->(CheckBox)n)
                 .filter(CheckBox::isSelected)
                 .map(ch->Event.EventType.valueOf(ch.getText()))
                 .collect(Collectors.toList());
-        return types;
     }
 
     public List<Event.EventPriority> getCheckedPriorities()
     {
-        List<Event.EventPriority> priorities = priorityFilters.getChildren().stream()
+        return priorityFilters.getChildren().stream()
                 .map((n)->(CheckBox)n)
                 .filter(CheckBox::isSelected)
                 .map(ch->Event.EventPriority.valueOf(ch.getText()))
                 .collect(Collectors.toList());
-        return priorities;
     }
 }

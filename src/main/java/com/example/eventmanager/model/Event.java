@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
-public class Event implements Comparable, Serializable
+public class Event implements Comparable<Event>, Serializable
 {
     //TODO: Klasy i możliwość porównania
     public enum EventType {BRAK, PRACA, RODZINA, ROZRYWKA, ZDROWIE, SPORT}
@@ -31,13 +31,11 @@ public class Event implements Comparable, Serializable
     }
 
     @Override
-    public int compareTo(Object o)
+    public int compareTo(Event other)
     {
-        if(o == null) return -1;
-        if(o == this) return 0;
-        if(!(o instanceof Event)) return 1;
-        Event casted = (Event) o;
-        return this.name.compareTo(casted.name);
+        if(other == null) return -1;
+        if(other == this) return 0;
+        return this.name.compareTo(other.name);
     }
 
     @Override

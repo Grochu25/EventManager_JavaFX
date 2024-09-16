@@ -7,11 +7,11 @@ import javafx.stage.FileChooser;
 
 import java.io.File;
 
-public class FileIOXML implements FileIO<Events>
+public class FileIOXML<T> implements FileIO<T>
 {
 
     @Override
-    public void writeToFile(Events events, File file) throws Exception {
+    public void writeToFile(T events, File file) throws Exception {
         JAXBContext context = JAXBContext.newInstance(Events.class);
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -19,7 +19,7 @@ public class FileIOXML implements FileIO<Events>
     }
 
     @Override
-    public void writeToFile(Events events) throws Exception {
+    public void writeToFile(T events) throws Exception {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Wybierz XML plik do importu");
         chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Plik XML","*.xml","*.XML"));
@@ -30,14 +30,14 @@ public class FileIOXML implements FileIO<Events>
     }
 
     @Override
-    public Events readFromFile(File file) throws Exception{
+    public T readFromFile(File file) throws Exception{
         JAXBContext context = JAXBContext.newInstance(Events.class);
         Unmarshaller unmarshaller = context.createUnmarshaller();
-        return (Events) unmarshaller.unmarshal(file);
+        return (T) unmarshaller.unmarshal(file);
     }
 
     @Override
-    public Events readFromFile() throws Exception {
+    public T readFromFile() throws Exception {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Wybierz XML plik do importu");
         chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Plik XML","*.XML","*.xml"));
