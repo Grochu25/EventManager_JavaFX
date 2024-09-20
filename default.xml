@@ -2,18 +2,32 @@
 <events>
     <eventList>
         <event>
-            <datetime>12.09.2024, 16:18</datetime>
-            <description>nie</description>
-            <name>TUBA</name>
-            <priority>BRAK</priority>
-            <type>BRAK</type>
+            <name>asdasd</name>
+            <description>asdasd</description>
+            <date>20.09.2024</date>
+            <type>PRACA</type>
+            <priority>WYSOKI</priority>
         </event>
         <event>
-            <datetime>15.09.2024, 13:00</datetime>
-            <description>może</description>
-            <name>Bomba</name>
+            <name>asdasd</name>
+            <description>asdasd</description>
+            <date>20.09.2024</date>
+            <type>BRAK</type>
             <priority>SREDNI</priority>
-            <type>RODZINA</type>
+        </event>
+        <event>
+            <name>sdaasd</name>
+            <description>assad</description>
+            <date>27.08.2024</date>
+            <type>PRACA</type>
+            <priority>NISKI</priority>
+        </event>
+        <event>
+            <name>adasd</name>
+            <description>asd</description>
+            <date>10.09.2024</date>
+            <type>BRAK</type>
+            <priority>BRAK</priority>
         </event>
     </eventList>
 </events>

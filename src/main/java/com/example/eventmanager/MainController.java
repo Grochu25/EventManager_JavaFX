@@ -103,6 +103,7 @@ public class MainController implements Initializable
         eventsFilteredList.addAll(eventsObservableList.filtered(
                 event-> (filters.getCheckedTypes().isEmpty() || filters.getCheckedTypes().contains(event.getType()))
                     && (filters.getCheckedPriorities().isEmpty() || filters.getCheckedPriorities().contains(event.getPriority()))
+                    && (event.getDate().isAfter(filters.getDateRange().dateFrom) && event.getDate().isBefore(filters.getDateRange().dateTo))
         ));
     }
 
@@ -150,7 +151,7 @@ public class MainController implements Initializable
             return null;
         }
 
-        return new Event(name,description,date.atStartOfDay(),type,priority);
+        return new Event(name,description,date,type,priority);
     }
 
     public void deleteChoosedEvent()
@@ -182,6 +183,15 @@ public class MainController implements Initializable
             fileIO.writeToFile(new Events(eventsObservableList));
         } catch (Exception e) {
             error("Nie można zapisać pliku");
+        }
+    }
+
+    public void exportOnExit()
+    {
+        try {
+            fileIO.writeToFile(new Events(eventsObservableList), new File("default.xml"));
+        } catch (Exception e) {
+            error("Nie można zapisać do pliku tymczasowego");
         }
     }
 }

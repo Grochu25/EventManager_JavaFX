@@ -19,7 +19,7 @@ public class TableColumns
     private void setColumnsInTable()
     {
         setColumn("Nazwa","name");
-        setColumn("Data","datetime");
+        setColumn("Data","date");
         setColumn("Typ","type");
         setColumn("Priorytet","priority");
     }

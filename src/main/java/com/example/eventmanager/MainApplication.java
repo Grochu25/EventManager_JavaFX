@@ -14,6 +14,10 @@ public class MainApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("Event Manager");
         stage.setScene(scene);
+
+        MainController controller = fxmlLoader.getController();
+        stage.setOnCloseRequest(e -> controller.exportOnExit());
+
         stage.show();
     }
 

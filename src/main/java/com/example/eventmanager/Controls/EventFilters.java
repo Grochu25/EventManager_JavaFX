@@ -6,9 +6,14 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Control;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,19 +21,34 @@ public class EventFilters
 {
     FlowPane typeFilters;
     FlowPane priorityFilters;
+    VBox dateFilters;
     Label typeLabel;
     Label priorityLabel;
     EventHandler<ActionEvent> checkboxEvent;
 
+    CheckBox dateUse;
+    DatePicker dateFromPicker;
+    DatePicker dateToPicker;
+
     public EventFilters(EventHandler<ActionEvent> checkboxEvent)
     {
         this.checkboxEvent = checkboxEvent;
-        typeFilters = new FlowPane();
-        priorityFilters = new FlowPane();
+
+        initializeFields();
 
         addTypeFilters();
         addPriorityFilters();
+        addDateFilters();
+    }
 
+    private void initializeFields()
+    {
+        typeFilters = new FlowPane();
+        priorityFilters = new FlowPane();
+        dateFilters = new VBox();
+        dateFromPicker = new DatePicker();
+        dateToPicker = new DatePicker();
+        dateUse = new CheckBox("dacie: ");
         typeLabel = new Label("typie: ");
         priorityLabel = new Label("priorytecie: ");
     }
@@ -57,9 +77,45 @@ public class EventFilters
         }
     }
 
+    private void addDateFilters()
+    {
+        setStyleToDateElements();
+        setActionsToDateElements();
+        addAllTo(dateFilters, dateUse, new Label("Od:"), dateFromPicker,new Label("Do:"), dateToPicker);
+    }
+
+    private void setStyleToDateElements()
+    {
+        dateUse.setPadding(new Insets(0, 10, 0, 0));
+        dateFromPicker.setPadding(new Insets(0, 5, 0, 0));
+        dateToPicker.setPadding(new Insets(0, 5, 0, 0));
+        dateFromPicker.setDisable(true);
+        dateToPicker.setDisable(true);
+    }
+
+    private void setActionsToDateElements()
+    {
+        dateUse.setOnMouseClicked(e->enableDataFilters());
+        dateUse.setOnAction(checkboxEvent);
+        dateToPicker.setOnAction(checkboxEvent);
+        dateFromPicker.setOnAction(checkboxEvent);
+    }
+
+    private void addAllTo(Pane pane, Control... controls)
+    {
+        for(Control control : controls)
+            pane.getChildren().add(control);
+    }
+
+    private void enableDataFilters()
+    {
+         dateToPicker.setDisable(!dateUse.isSelected());
+         dateFromPicker.setDisable(!dateUse.isSelected());
+    }
+
     public List<Node> getFilterPanes()
     {
-        return List.of(typeLabel, typeFilters, priorityLabel, priorityFilters);
+        return List.of(typeLabel, typeFilters, priorityLabel, priorityFilters, dateFilters);
     }
 
     public List<Event.EventType> getCheckedTypes()
@@ -78,5 +134,17 @@ public class EventFilters
                 .filter(CheckBox::isSelected)
                 .map(ch->Event.EventPriority.valueOf(ch.getText()))
                 .collect(Collectors.toList());
+    }
+
+    public DateRange getDateRange()
+    {
+        if(dateUse.isSelected())
+        {
+            LocalDate dateForm = (dateFromPicker.getValue()!=null)? dateFromPicker.getValue() : LocalDate.MIN;
+            LocalDate dateTo = (dateToPicker.getValue()!=null)? dateToPicker.getValue() : LocalDate.MAX;
+            return new DateRange(dateForm,dateTo);
+        }
+        else
+            return new DateRange(LocalDate.MIN,LocalDate.MAX);
     }
 }
